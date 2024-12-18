@@ -46,7 +46,7 @@ Python 3.10.12          # <--- you should see something like this
 # first: make sure you have activated the virtual environment (if you used one). See step 2 tutorial
 
 # cd to the project folder
-$ cd quadrotor-control-sim
+$ cd arm-kinematics-module
 
 # install all required packages from requirements.txt
 $ pip install -r requirements.txt
