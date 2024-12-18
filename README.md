@@ -25,8 +25,8 @@ This repository provides the **visualization tool (viz tool)** for testing your 
 #### Step 1: Install Python 3 (if not already installed)
 - First, check if you have Python3, to do that, open your terminal and type:
 ```bash
-kene-mbanisi@olin-laptop:~$ python3 --version    # <--- type this
-Python 3.10.12                                   # <--- you should see something like this
+$ python3 --version     # <--- type this
+Python 3.10.12          # <--- you should see something like this
 ```
 - If you don’t have Python installed, follow this [tutorial here](https://realpython.com/installing-python/) to install it.
 
@@ -46,10 +46,10 @@ Python 3.10.12                                   # <--- you should see something
 # first: make sure you have activated the virtual environment (if you used one). See step 2 tutorial
 
 # cd to the project folder
-cd quadrotor-control-sim
+$ cd quadrotor-control-sim
 
 # install all required packages from requirements.txt
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 
@@ -57,14 +57,14 @@ pip install -r requirements.txt
 
 - If setup worked well, you should be able to run the main script with the command below:
 ``` bash
-python main_arm.py 
+$ python main_arm.py 
 # this configures the two-DOF arm
 ```
 
 - There are options to pass command-line arguments to configure the viz tool to other arm configurations, i.e., SCARA and 5-DOF arm
 
 ``` bash
-(env) user@user:$ python main_arm.py -h
+$ python main_arm.py -h
 
 usage: main_arm.py [-h] [--robot_type ROBOT_TYPE] 
 
@@ -75,5 +75,9 @@ options:
 ```
 - Example, for SCARA robot:
 ```bash
-python main_arm.py --robot_type scara
+$ python main_arm.py --robot_type scara
 ```
+
+#### Usage Guide
+
+<img src = "media/arm-kinematics-viz-tool.png">
