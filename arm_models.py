@@ -332,7 +332,9 @@ class TwoDOFRobot():
 
         ########################################
 
-        # replace the placeholder values with your code
+        # Replace the placeholder values with your code
+
+
         placeholder_value = [0.0, 0.0, 0.0]
 
 
@@ -472,7 +474,7 @@ class ScaraRobot():
         Calculate the main robot points (links and end-effector position) using the current joint angles.
         Updates the robot's points array and end-effector position.
         """
-               
+
         # Calculate transformation matrices for each joint and end-effector
         self.points[0] = np.array([0, 0, 0, 1])
         self.points[1] = np.array([0, 0, self.l1, 1])
