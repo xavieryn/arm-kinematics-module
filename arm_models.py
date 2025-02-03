@@ -327,13 +327,27 @@ class TwoDOFRobot():
 
         Updates the `points` list, storing the coordinates of the base, shoulder, elbow, and end effector.
         """
+
+        
+
+        ########################################
+
+        # replace the placeholder values with your code
+        placeholder_value = [0.0, 0.0, 0.0]
+
+
         # Base position
-        self.points[0] = [0.0, 0.0, 0.0]
+        self.points[0] = placeholder_value
         # Shoulder joint
-        self.points[1] = [self.l1 * cos(self.theta[0]), self.l1 * sin(self.theta[0]), 0.0]
+        self.points[1] = placeholder_value
         # Elbow joint
-        self.points[2] = [self.l1 * cos(self.theta[0]) + self.l2 * cos(self.theta[0] + self.theta[1]),
-                          self.l1 * sin(self.theta[0]) + self.l2 * sin(self.theta[0] + self.theta[1]), 0.0]
+        self.points[2] = placeholder_value
+
+        ########################################
+
+
+
+
 
         # Update end effector position
         self.ee.x = self.points[2][0]
@@ -458,6 +472,7 @@ class ScaraRobot():
         Calculate the main robot points (links and end-effector position) using the current joint angles.
         Updates the robot's points array and end-effector position.
         """
+               
         # Calculate transformation matrices for each joint and end-effector
         self.points[0] = np.array([0, 0, 0, 1])
         self.points[1] = np.array([0, 0, self.l1, 1])
