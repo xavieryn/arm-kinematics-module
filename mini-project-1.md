@@ -31,7 +31,7 @@ A **PDF submission** with the following:
 - Derivation of the DH parameters and table and forward kinematics equations for the 5DOF robot platform
 - Derivation of the jacobian matrix and inverse jacobian matrix for the robot arm
 - Code showing all the functions you implemented
-- Link to a screenshot video showing your verification using the viz tool for both forward position kinematics and velocity kinematics
+- Link to a screenshot video showing your verification using the viz tool for both forward position kinematics and velocity kinematics (see [here](https://github.com/OlinCollege-FunRobo/arm-kinematics-module/blob/main/resources/user_inputs.md) for user input instructions)
 - Link to a video showing gamepad control of the physical 5DOF robot arm
 - Link to your team's Github repository with a reasonably setup README
 - **Individual reflections** on the following questions:
