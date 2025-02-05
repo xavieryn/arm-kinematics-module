@@ -11,4 +11,8 @@ When using the Viz tool in the **velocity kinematics (FVK)** mode, please use th
 
 ## Gamepad Mapping
 
-TBA
+When working on the robot hardware, please use the gamepad to control the end-effector velocity in the **velocity kinematics (FVK)** mode. Please use the following button mappings.
+
+<br />
+
+<img src = "../media/gamepad_mapping.png">
