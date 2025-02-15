@@ -290,7 +290,7 @@ class Visualizer:
         return 'Deactivated!' if not self.vk_status else 'Activated!'
 
 
-    def on_press(self, key):
+    def on_press(self, key): # VELOCITY OF THE ROBOT
         """
         Handles key press events to control the velocity of the robot.
 
@@ -367,6 +367,9 @@ def main():
     visualization for the corresponding robot type.
     """
     # Argument parsing
+
+    # THIS CHANGES WHAT ROBOT WE ARE USING
+    # IF I PUT IN THE ORIGINAL SCRIPT, THEN I SAY --robot_type 5-dof
     parser = argparse.ArgumentParser(description="Robot Manipulator Visualization for Kinematics Analysis")
     parser.add_argument('--robot_type', 
                         help="Insert robot type, e.g., '2-dof', 'scara', '5-dof'. Default is '2-dof'.", 

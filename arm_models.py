@@ -253,7 +253,12 @@ class TwoDOFRobot():
         # insert your code here
 
         ########################################
-
+        if not radians:
+            self.theta[0] = theta[0] *  PI / 180
+            self.theta[1] = theta[1] *  PI / 180
+        else:
+            self.theta = theta
+        
 
         # Update the robot configuration (i.e., the positions of the joints and end effector)
         self.calc_robot_points()
@@ -335,21 +340,16 @@ class TwoDOFRobot():
         # Replace the placeholder values with your code
 
 
-        placeholder_value = [0.0, 0.0, 0.0]
-
-
         # Base position
-        self.points[0] = placeholder_value
+        self.points[0] = [0,0,0] # reference frame is always considered [0]
         # Shoulder joint
-        self.points[1] = placeholder_value
+        self.points[1] = [cos(self.theta[0])* self.l1, sin(self.theta[0])* self.l1, 0 ] # 2D for now 
         # Elbow joint
-        self.points[2] = placeholder_value
+        phi = self.theta[0] +self.theta[1]
+        self.points[2] = [cos(phi)* self.l2 + self.points[1][0],
+                        sin(phi) * self.l2 + self.points[1][1], 0]
 
         ########################################
-
-
-
-
 
         # Update end effector position
         self.ee.x = self.points[2][0]
@@ -427,6 +427,8 @@ class ScaraRobot():
 
         ########################################
 
+        # make sure it is in degrees, not radians 
+
         # Calculate robot points (e.g., end-effector position)
         self.calc_robot_points()
 
@@ -436,7 +438,7 @@ class ScaraRobot():
         Calculate Inverse Kinematics (IK) based on the input end-effector coordinates.
 
         Args:
-            EE (EndEffector): End-effector object containing desired position (x, y, z).
+ `           EE (EndEffector): End-effector object containing desired position (x, y, z).
             soln (int): Solution index (0 or 1), for multiple possible IK solutions.
         """
         x, y, z = EE.x, EE.y, EE.z
@@ -539,11 +541,12 @@ class FiveDOFRobot:
         self.ee = EndEffector()
         
         # Robot's points
-        self.num_dof = 5
+        self.num_dof = 5 
         self.points = [None] * (self.num_dof + 1)
 
         # Denavit-Hartenberg parameters and transformation matrices
         self.DH = np.zeros((5, 4))
+
         self.T = np.zeros((self.num_dof, 4, 4))
         
         ########################################
@@ -551,6 +554,47 @@ class FiveDOFRobot:
         # insert your additional code here
 
         ########################################
+
+        # THIS IS WHERE WE PUT DH TABLE
+
+        m01 = np.array([[cos(self.theta[0]), 0, sin(self.theta[0]), 0],
+                        [sin(self.theta[0]), 0, -cos(self.theta[0]), 0], 
+                        [0, 0, 1, 0], 
+                        [0, 0, 0, 1]])
+
+        m12 = np.array([[cos(self.theta[1]), -sin(self.theta[1]), 0, self.l2 * cos(self.theta[1])],
+                        [sin(self.theta[1]), cos(self.theta[1]), 0, self.l2*sin(self.theta[1])], 
+                        [0, 0, 1, 0], 
+                        [0, 0, 0, 1]])
+
+        m23 = np.array([[cos(self.theta[2]),-sin(self.theta[2]),0,self.l3 * cos(self.theta[2])],
+            [sin(self.theta[2]),cos(self.theta[2]),0,self.l3 * sin(self.theta[2])],
+            [0,0,1,0],
+            [0,0,0,1]])
+        m34 = np.array([[cos(self.theta[3]),-sin(self.theta[3]),0,self.l4* cos(self.theta[3])],
+            [sin(self.theta[3]),cos(self.theta[3]),0,self.l4 * sin(self.theta[3])],
+            [0,0,1,0],
+            [0,0,0,1]])
+        m45 = np.array([[0 , 0 , 1 , 0],
+                        [-1 , 0 , 0 , 0],
+                        [0 , 1 , 0 , 0],
+                        [0 , 0 , 0, 1]])
+        m56 = np.array([[cos(self.theta[4]), -sin(self.theta[4]), 0, 0],
+                        [sin(self.theta[4]), cos(self.theta[4]), 0, 0],
+                        [0 , 0 , 1 , self.l4 + self.l5],
+                        [0 , 0 , 0 , 1]])
+      
+    
+
+        # self.T = np.zeros((self.num_dof, 4, 4))
+        #print(self.T)
+        self.T[0] = m01
+        self.T[1] = m12
+        self.T[2] = m23
+        self.T[3] = m34 
+        self.T[4] = np.matmul(m45 ,m56) # m45 is just the rotation so it does not need another link
+        #print(self.T)
+
 
     
     def calc_forward_kinematics(self, theta: list, radians=False):
@@ -565,6 +609,18 @@ class FiveDOFRobot:
 
         # insert your code here
 
+        if not radians:
+            for i in range(len(self.theta)):
+                self.theta[i] = theta[i] * PI / 180
+        else:
+            self.theta = theta
+        print(self.theta)
+
+      
+        
+            
+
+      
         ########################################
         
         # Calculate robot points (positions of joints)
@@ -607,6 +663,9 @@ class FiveDOFRobot:
         ########################################
 
         # insert your code here
+
+        # Jacobian stuff
+
 
         ########################################
 
