@@ -2,16 +2,13 @@
 
 ## Overview
 This mini-project has the following goals:
-- Solidify your understanding on how to use the ...
-- **ADD MORE**
-- Improve coding skills in Python
+- TBD
 
-This assignment will count towards **15% of your final course grade**. It is a team-based assignment with a maximum of 3 students in a team.
+This assignment will count towards your **final course grade**. It is a team-based assignment with 2-3 students in a team.
 
 ## What to Do
 
-1. Derive the closed-form IK solution for the 5DOF robot platform (in viz & hardware)
-2. Implement the numerical IK solver for the 5DOF robot platform (in viz & hardware)
+1. TBD
 
 <img src = "media/mini-project-1.png">
 
@@ -32,6 +29,3 @@ A **PDF submission** with the following:
     - What did you learn about arm inverse kinematics that we didn't explicitly cover in class?
     - What more would you like to learn about arm inverse kinematics?
 
-**TODO**: CA's help with creating a rubric for this submission
-
-**TODO**: Provide guidance on testing IK on physical robot

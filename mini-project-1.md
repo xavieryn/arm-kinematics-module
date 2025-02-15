@@ -1,28 +1,37 @@
 # Mini-Project I: Forward Kinematics
 
 ## Overview
-This mini-project has the following goals:
-- Solidify your understanding on how to use the DH convention in determining forward kinematics equations
-- **ADD MORE**
-- Improve coding skills in Python
+This mini-project aims to:
+- Strengthen your ability to apply the Denavit-Hartenberg (DH) convention for determining forward kinematics equations.
+- Practice deriving and applying Jacobian matrices for robot manipulators (e.g., for resolved-rate motion control).
+- Develop your proficiency in Python programming for robotics applications.
 
-This assignment will count towards **15% of your final course grade**. It is a team-based assignment with a maximum of 3 students in a team.
+This assignment will count towards your **final course grade**. It is a team-based assignment with 2-3 students in a team.
 
 ## What to Do
 
-1. Derive the DH parameters and implement the forward kinematics function for the 5DOF robot platform (with verification in the Viz tool)
-2. Derive the inverse jacobian and implement a resolved-rate motion control (RRMC)
-3. Implement the motion control through gamepad control of the 5DOF robot platform
+**Problem 1**
+- Derive the DH parameters and table for the 5DOF robot platform
+- Derive the FPK equations and implement in software (with verification in the Viz tool)
+
+**Problem 2**
+- Derive the inverse jacobian matrix and implement a resolved-rate motion control (RRMC) with verification in the Viz tool
+
+**Problem 3**
+- Implement the resolved-rate motion control (RRMC) through gamepad control of the 5DOF robot hardware
+
+<br />
 
 <img src = "media/mini-project-1.png">
 
 ## What to Submit
 
 A **PDF submission** with the following:
-- Derivation of the DH parameters and forward kinematics equations for the 5DOF robot platform
+- Diagram of the robot arm with the coordinate frames clearly defined
+- Derivation of the DH parameters and table and forward kinematics equations for the 5DOF robot platform
 - Derivation of the jacobian matrix and inverse jacobian matrix for the robot arm
 - Code showing all the functions you implemented
-- Link to a screenshot video showing your verification using the viz tool for both forward position kinematics and velocity kinematics
+- Link to a screenshot video showing your verification using the viz tool for both forward position kinematics and velocity kinematics (see [here](https://github.com/OlinCollege-FunRobo/arm-kinematics-module/blob/main/resources/user_inputs.md) for user input instructions)
 - Link to a video showing gamepad control of the physical 5DOF robot arm
 - Link to your team's Github repository with a reasonably setup README
 - **Individual reflections** on the following questions:
@@ -33,6 +42,3 @@ A **PDF submission** with the following:
     - What did you learn about arm forward kinematics that we didn't explicitly cover in class?
     - What more would you like to learn about arm forward kinematics?
 
-**TODO**: CA's help with creating a rubric for this submission
-
-**TODO**: Provide code to aid robot control and gamepad interfacing
