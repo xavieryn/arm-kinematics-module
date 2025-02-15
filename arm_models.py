@@ -556,44 +556,49 @@ class FiveDOFRobot:
         ########################################
 
         # THIS IS WHERE WE PUT DH TABLE
-
-        m01 = np.array([[cos(self.theta[0]), 0, sin(self.theta[0]), 0],
-                        [sin(self.theta[0]), 0, -cos(self.theta[0]), 0], 
-                        [0, 0, 1, 0], 
-                        [0, 0, 0, 1]])
-
-        m12 = np.array([[cos(self.theta[1]), -sin(self.theta[1]), 0, self.l2 * cos(self.theta[1])],
-                        [sin(self.theta[1]), cos(self.theta[1]), 0, self.l2*sin(self.theta[1])], 
-                        [0, 0, 1, 0], 
-                        [0, 0, 0, 1]])
-
-        m23 = np.array([[cos(self.theta[2]),-sin(self.theta[2]),0,self.l3 * cos(self.theta[2])],
-            [sin(self.theta[2]),cos(self.theta[2]),0,self.l3 * sin(self.theta[2])],
-            [0,0,1,0],
-            [0,0,0,1]])
-        m34 = np.array([[cos(self.theta[3]),-sin(self.theta[3]),0,self.l4* cos(self.theta[3])],
-            [sin(self.theta[3]),cos(self.theta[3]),0,self.l4 * sin(self.theta[3])],
-            [0,0,1,0],
-            [0,0,0,1]])
-        m45 = np.array([[0 , 0 , 1 , 0],
-                        [-1 , 0 , 0 , 0],
-                        [0 , 1 , 0 , 0],
-                        [0 , 0 , 0, 1]])
-        m56 = np.array([[cos(self.theta[4]), -sin(self.theta[4]), 0, 0],
-                        [sin(self.theta[4]), cos(self.theta[4]), 0, 0],
-                        [0 , 0 , 1 , self.l4 + self.l5],
-                        [0 , 0 , 0 , 1]])
-      
+        self.calc_HTM()
     
+    def calc_HTM(self):
+            m01 = np.array([[cos(self.theta[0]), 0, sin(self.theta[0]), 0],
+                            [sin(self.theta[0]), 0, -cos(self.theta[0]), 0], 
+                            [0, 1, 0, self.l1], 
+                            [0, 0, 0, 1]])
 
-        # self.T = np.zeros((self.num_dof, 4, 4))
-        #print(self.T)
-        self.T[0] = m01
-        self.T[1] = m12
-        self.T[2] = m23
-        self.T[3] = m34 
-        self.T[4] = np.matmul(m45 ,m56) # m45 is just the rotation so it does not need another link
-        #print(self.T)
+            m12 = np.array([[cos(self.theta[1]), -sin(self.theta[1]), 0, self.l2 * cos(self.theta[1])],
+                            [sin(self.theta[1]), cos(self.theta[1]), 0, self.l2 * sin(self.theta[1])], 
+                            [0, 0, 1, 0], 
+                            [0, 0, 0, 1]])
+
+            m23 = np.array([[cos(self.theta[2]),-sin(self.theta[2]),0,self.l3 * cos(self.theta[2])],
+                [sin(self.theta[2]),cos(self.theta[2]),0,self.l3 * sin(self.theta[2])],
+                [0,0,1,0],
+                [0,0,0,1]])
+            
+            m34 = np.array([[cos(self.theta[3]),-sin(self.theta[3]),0,self.l4* cos(self.theta[3])],
+                [sin(self.theta[3]),cos(self.theta[3]),0,self.l4 * sin(self.theta[3])],
+                [0,0,1,0],
+                [0,0,0,1]])
+            
+            m45 = np.array([[0 , 0 , 1 , 0],
+                            [-1 , 0 , 0 , 0],
+                            [0 , 1 , 0 , 0],
+                            [0 , 0 , 0, 1]])
+            
+            m56 = np.array([[cos(self.theta[4]), -sin(self.theta[4]), 0, 0],
+                            [sin(self.theta[4]), cos(self.theta[4]), 0, 0],
+                            [0 , 0 , 1 , self.l4 + self.l5],
+                            [0 , 0 , 0 , 1]])
+        
+        
+
+            # self.T = np.zeros((self.num_dof, 4, 4))
+            #print(self.T)
+            self.T[0] = m01
+            self.T[1] = m12
+            self.T[2] = m23
+            self.T[3] = m34 
+            self.T[4] = np.matmul(m45 ,m56) # m45 is just the rotation so it does not need another link
+            #print(self.T)
 
 
     
@@ -615,10 +620,6 @@ class FiveDOFRobot:
         else:
             self.theta = theta
         print(self.theta)
-
-      
-        
-            
 
       
         ########################################
@@ -675,7 +676,7 @@ class FiveDOFRobot:
 
     def calc_robot_points(self):
         """ Calculates the main arm points using the current joint angles """
-
+        self.calc_HTM()
         # Initialize points[0] to the base (origin)
         self.points[0] = np.array([0, 0, 0, 1])
 
@@ -683,10 +684,12 @@ class FiveDOFRobot:
         T_cumulative = [np.eye(4)]
         for i in range(self.num_dof):
             T_cumulative.append(T_cumulative[-1] @ self.T[i])
+            #print("T_cumulative", T_cumulative[-1] @ self.T[i])
 
         # Calculate the robot points by applying the cumulative transformations
         for i in range(1, 6):
             self.points[i] = T_cumulative[i] @ self.points[0]
+            #print(self.points[i])
 
         # Calculate EE position and rotation
         self.EE_axes = T_cumulative[-1] @ np.array([0.075, 0.075, 0.075, 1])  # End-effector axes
