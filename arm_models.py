@@ -2,6 +2,8 @@ from math import sin, cos
 import numpy as np
 from matplotlib.figure import Figure
 from helper_fcns.utils import EndEffector, rotm_to_euler
+from sympy import symbols, diff, exp, cos, sin, Matrix
+
 
 PI = 3.1415926535897932384
 np.set_printoptions(precision=3)
@@ -547,6 +549,8 @@ class FiveDOFRobot:
         # Denavit-Hartenberg parameters and transformation matrices
         self.DH = np.zeros((5, 4))
 
+        
+        self.HMatrix = np.zeros([4,4])
         self.T = np.zeros((self.num_dof, 4, 4))
         
         ########################################
@@ -557,7 +561,15 @@ class FiveDOFRobot:
 
         # THIS IS WHERE WE PUT DH TABLE
         self.calc_HTM()
+        self.calc_velocity_kinematics([0,0,0,0,0])
+
+        #self.makeHMatrix()
+
     
+    #def makeHMatrix(self):
+
+        #self.HMatrix = np.matmul(self.T[0]), np.matmul(self.T[1], np.matmul(self.T[2],np.matmul(self.T[3],self.T[4])))
+
     def calc_HTM(self):
             m01 = np.array([[cos(self.theta[0]), 0, sin(self.theta[0]), 0],
                             [sin(self.theta[0]), 0, -cos(self.theta[0]), 0], 
@@ -600,6 +612,7 @@ class FiveDOFRobot:
             self.T[4] = np.matmul(m45 ,m56) # m45 is just the rotation so it does not need another link
             #print(self.T)
 
+            
 
     
     def calc_forward_kinematics(self, theta: list, radians=False):
@@ -666,6 +679,49 @@ class FiveDOFRobot:
         # insert your code here
 
         # Jacobian stuff
+
+        # Define the symbols
+        t0, t1, t2, t3, t4  = symbols('t0 t1 t2 t3 t4 ')
+
+        m01 = Matrix([[cos(t0), 0, sin(t0), 0],
+                            [sin(t0), 0, -cos(t0), 0], 
+                            [0, 1, 0, self.l1], 
+                            [0, 0, 0, 1]])
+
+        m12 = Matrix([[cos(t1), -sin(t1), 0, self.l2 * cos(t1)],
+                            [sin(t1), cos(t1), 0, self.l2 * sin(t1)], 
+                            [0, 0, 1, 0], 
+                            [0, 0, 0, 1]])
+
+        m23 = Matrix([[cos(t2),-sin(t2),0,self.l3 * cos(t2)],
+                [sin(t2),cos(t2),0,self.l3 * sin(t2)],
+                [0,0,1,0],
+                [0,0,0,1]])
+            
+        m34 = Matrix([[cos(t3),-sin(t3),0,self.l4* cos(t3)],
+                [sin(t3),cos(t3),0,self.l4 * sin(t3)],
+                [0,0,1,0],
+                [0,0,0,1]])
+            
+        m45 = Matrix([[0 , 0 , 1 , 0],
+                            [-1 , 0 , 0 , 0],
+                            [0 , 1 , 0 , 0],
+                            [0 , 0 , 0, 1]])
+            
+        m56 = Matrix([[cos(t4), -sin(t4), 0, 0],
+                            [sin(t4), cos(t4), 0, 0],
+                            [0 , 0 , 1 , self.l4 + self.l5],
+                            [0 , 0 , 0 , 1]])
+
+        Hm = m01 * m12 * m23 * m34 * m45
+        #print(Hm)
+        Hx = Hm[0, 3]
+        Hy = Hm[1 , 3]
+        Hz = Hm[2 , 3]
+
+        jacobian = np.zeros(3,5)
+        # Z1xR1
+        #print(Hx)
 
 
         ########################################
