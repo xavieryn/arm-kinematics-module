@@ -2,7 +2,7 @@ from math import sin, cos
 import numpy as np
 from matplotlib.figure import Figure
 from helper_fcns.utils import EndEffector, rotm_to_euler
-from sympy import symbols, diff, exp, cos, sin, Matrix
+from sympy import symbols, diff, exp, cos, sin, Matrix, shape
 
 
 PI = 3.1415926535897932384
@@ -612,6 +612,7 @@ class FiveDOFRobot:
             self.T[4] = np.matmul(m45 ,m56) # m45 is just the rotation so it does not need another link
             #print(self.T)
 
+
             
 
     
@@ -719,9 +720,26 @@ class FiveDOFRobot:
         Hy = Hm[1 , 3]
         Hz = Hm[2 , 3]
 
-        jacobian = np.zeros(3,5)
+        # [row, column]
+        
+        #jacobian = np.zeros([3,5])
+
+        #print( Hx.diff(t0))
+        #print(Hx.diff(t1))
+        jacobian = Matrix([[Hx.diff(t0), Hx.diff(t1), Hx.diff(t2),Hx.diff(t3), Hx.diff(t4)],
+                           [Hy.diff(t0), Hy.diff(t1), Hy.diff(t2), Hy.diff(t3), Hy.diff(t4)],
+                           [Hz.diff(t0), Hz.diff(t1) ,Hz.diff(t2) ,Hz.diff(t3), Hz.diff(t4)],
+                           ])
+        #print(jacobian)
+
+        invJac = (jacobian.T * jacobian)**-1 * jacobian.T
+
+        #print(invJac)
+        print("hi")
+        print(shape(invJac))
+        #print(Hy.diff(t0))
         # Z1xR1
-        #print(Hx)
+        print(Hx)
 
 
         ########################################
