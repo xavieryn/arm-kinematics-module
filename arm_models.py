@@ -1,8 +1,10 @@
 from math import sin, cos
 import numpy as np
+#from numpy import cos, sin
 from matplotlib.figure import Figure
 from helper_fcns.utils import EndEffector, rotm_to_euler
-from sympy import *
+import sympy as sp
+from sympy import evalf
 
 
 PI = 3.1415926535897932384
@@ -561,7 +563,6 @@ class FiveDOFRobot:
 
         # THIS IS WHERE WE PUT DH TABLE
         self.calc_HTM()
-        self.calc_velocity_kinematics([0,0,0,0,0])
 
         #self.makeHMatrix()
 
@@ -633,7 +634,7 @@ class FiveDOFRobot:
                 self.theta[i] = theta[i] * PI / 180
         else:
             self.theta = theta
-        print(self.theta)
+        #print(self.theta)
 
       
         ########################################
@@ -682,39 +683,39 @@ class FiveDOFRobot:
         # Jacobian stuff
 
         # Define the symbols
-        t0, t1, t2, t3, t4  = symbols('t0 t1 t2 t3 t4 ')
+        t0, t1, t2, t3, t4  = sp.symbols('t0 t1 t2 t3 t4 ')
 
-        m01 = Matrix([[cos(t0), 0, sin(t0), 0],
-                            [sin(t0), 0, -cos(t0), 0], 
+        m01j = sp.Matrix([[sp.cos(t0), 0, sp.sin(t0), 0],
+                            [sp.sin(t0), 0, -sp.cos(t0), 0], 
                             [0, 1, 0, self.l1], 
                             [0, 0, 0, 1]])
 
-        m12 = Matrix([[cos(t1), -sin(t1), 0, self.l2 * cos(t1)],
-                            [sin(t1), cos(t1), 0, self.l2 * sin(t1)], 
+        m12j = sp.Matrix([[sp.cos(t1), -sp.sin(t1), 0, self.l2 * sp.cos(t1)],
+                            [sp.sin(t1), sp.cos(t1), 0, self.l2 * sp.sin(t1)], 
                             [0, 0, 1, 0], 
                             [0, 0, 0, 1]])
 
-        m23 = Matrix([[cos(t2),-sin(t2),0,self.l3 * cos(t2)],
-                [sin(t2),cos(t2),0,self.l3 * sin(t2)],
+        m23j = sp.Matrix([[sp.cos(t2),-sp.sin(t2),0,self.l3 * sp.cos(t2)],
+                [sp.sin(t2),sp.cos(t2),0,self.l3 * sp.sin(t2)],
                 [0,0,1,0],
                 [0,0,0,1]])
             
-        m34 = Matrix([[cos(t3),-sin(t3),0,self.l4* cos(t3)],
-                [sin(t3),cos(t3),0,self.l4 * sin(t3)],
+        m34j = sp.Matrix([[sp.cos(t3),-sp.sin(t3),0,self.l4* sp.cos(t3)],
+                [sp.sin(t3),sp.cos(t3),0,self.l4 * sp.sin(t3)],
                 [0,0,1,0],
                 [0,0,0,1]])
             
-        m45 = Matrix([[0 , 0 , 1 , 0],
+        m45j = sp.Matrix([[0 , 0 , 1 , 0],
                             [-1 , 0 , 0 , 0],
                             [0 , 1 , 0 , 0],
                             [0 , 0 , 0, 1]])
             
-        m56 = Matrix([[cos(t4), -sin(t4), 0, 0],
-                            [sin(t4), cos(t4), 0, 0],
+        m56j = sp.Matrix([[sp.cos(t4), -sp.sin(t4), 0, 0],
+                            [sp.sin(t4), sp.cos(t4), 0, 0],
                             [0 , 0 , 1 , self.l4 + self.l5],
                             [0 , 0 , 0 , 1]])
 
-        Hm = m01 * m12 * m23 * m34 * m45
+        Hm = m01j * m12j * m23j * m34j * m45j * m56j
         #print(Hm)
         Hx = Hm[0, 3]
         Hy = Hm[1 , 3]
@@ -726,36 +727,44 @@ class FiveDOFRobot:
 
         #print( Hx.diff(t0))
         #print(Hx.diff(t1))
-        jacobian = Matrix([[Hx.diff(t0), Hx.diff(t1), Hx.diff(t2),Hx.diff(t3), Hx.diff(t4)],
-                           [Hy.diff(t0), Hy.diff(t1), Hy.diff(t2), Hy.diff(t3), Hy.diff(t4)],
-                           [Hz.diff(t0), Hz.diff(t1) ,Hz.diff(t2) ,Hz.diff(t3), Hz.diff(t4)],
+        jacobian = sp.Matrix([[sp.diff(Hx, t0), sp.diff(Hx, t1), sp.diff(Hx, t2),sp.diff(Hx, t3), sp.diff(Hx, t4)],
+                           [sp.diff(Hy, t0), sp.diff(Hy, t1), sp.diff(Hy, t2),sp.diff(Hy, t3), sp.diff(Hy, t4)],
+                           [sp.diff(Hz, t0), sp.diff(Hz, t1), sp.diff(Hz, t2),sp.diff(Hz, t3), sp.diff(Hz, t4)],
                            ])
 
         jacobian = jacobian.evalf(subs={t0: self.theta[0]})
-        jacobian = jacobian.evalf(subs={t1: self.theta[1]})
-        jacobian = jacobian.evalf(subs={t2: self.theta[2]})
-        jacobian = jacobian.evalf(subs={t3: self.theta[3]})
-        jacobian = jacobian.evalf(subs={t4: self.theta[4]})
+        jacobian =  jacobian.evalf(subs={t1: self.theta[1]})
+        jacobian =  jacobian.evalf(subs={t2: self.theta[2]})
+        jacobian =  jacobian.evalf(subs={t3: self.theta[3]})
+        jacobian =  jacobian.evalf(subs={t4: self.theta[4]})
 
 
         #print(jacobian)
 
-        print("hi")
         print("Jacobian", jacobian)
         print()
-        invJac =  np.array(transpose(jacobian) * ( (jacobian * transpose(jacobian)) **-1 ))
+        invJac =  np.array(sp.transpose(jacobian) * (( (jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001) **-1 ))
+        print( jacobian * sp.transpose(jacobian)* sp.eye(3)*1.0001) 
         print("hi", invJac)
         vel = np.array([vel])
-        print("shape of vel", shape(vel))
-        print("shape of invJac",  shape(invJac))
-        invJac = np.nan_to_num(invJac, nan=0)
+        print("shape of vel", np.shape(vel))
+        print("shape of invJac",  np.shape(invJac))
         print(invJac)
-        print(vel * invJac)
         #print(vel * invJac)
         #print(vel*invJac)
+        thetaDot = np.matmul(invJac, np.transpose(vel))
+        print("thetadot shape", np.shape(thetaDot))
+        timeStep = 0.02
+        for i in range(len(self.theta)):
+            #print(self.theta[i])
+            self.theta[i] = self.theta[i] + (float(thetaDot[i][0]) * timeStep)
+            print(type(self.theta[i]))
+
 
 
        #.02 Time Step
+
+
 
 
         #print(Hy.diff(t0))n

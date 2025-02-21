@@ -298,18 +298,18 @@ class Visualizer:
             key (pynput.keyboard.Key): The key that was pressed.
         """
         if self.vk_status:
-            if key == keyboard.Key.up:
+            if key == keyboard.Key.up: # Y up
                 self.v[1] = 1
-            elif key == keyboard.Key.down:
+            elif key == keyboard.Key.down: # Y down
                 self.v[1] = -1
-            elif key == keyboard.Key.left:
+            elif key == keyboard.Key.left: # x left
                 self.v[0] = -1
-            elif key == keyboard.Key.right:
+            elif key == keyboard.Key.right: # x right
                 self.v[0] = 1
             elif hasattr(key, 'char'):
-                if key.char == 'w':
+                if key.char == 'w': # z up
                     self.v[2] = 1
-                elif key.char == 's':
+                elif key.char == 's': # z down
                     self.v[2] = -1
 
 
