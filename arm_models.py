@@ -2,7 +2,7 @@ from math import sin, cos
 import numpy as np
 from matplotlib.figure import Figure
 from helper_fcns.utils import EndEffector, rotm_to_euler
-from sympy import symbols, diff, exp, cos, sin, Matrix, shape
+from sympy import *
 
 
 PI = 3.1415926535897932384
@@ -730,18 +730,38 @@ class FiveDOFRobot:
                            [Hy.diff(t0), Hy.diff(t1), Hy.diff(t2), Hy.diff(t3), Hy.diff(t4)],
                            [Hz.diff(t0), Hz.diff(t1) ,Hz.diff(t2) ,Hz.diff(t3), Hz.diff(t4)],
                            ])
+
+        jacobian = jacobian.evalf(subs={t0: self.theta[0]})
+        jacobian = jacobian.evalf(subs={t1: self.theta[1]})
+        jacobian = jacobian.evalf(subs={t2: self.theta[2]})
+        jacobian = jacobian.evalf(subs={t3: self.theta[3]})
+        jacobian = jacobian.evalf(subs={t4: self.theta[4]})
+
+
         #print(jacobian)
 
-        invJac = (jacobian.T * jacobian)**-1 * jacobian.T
-
-        #print(invJac)
         print("hi")
-        print(shape(invJac))
-        #print(Hy.diff(t0))
+        print("Jacobian", jacobian)
+        print()
+        invJac =  np.array(transpose(jacobian) * ( (jacobian * transpose(jacobian)) **-1 ))
+        print("hi", invJac)
+        vel = np.array([vel])
+        print("shape of vel", shape(vel))
+        print("shape of invJac",  shape(invJac))
+        invJac = np.nan_to_num(invJac, nan=0)
+        print(invJac)
+        print(vel * invJac)
+        #print(vel * invJac)
+        #print(vel*invJac)
+
+
+       #.02 Time Step
+
+
+        #print(Hy.diff(t0))n
         # Z1xR1
-        print(Hx)
 
-
+        # endJointVelocity = invJac * vel
         ########################################
 
         # Recompute robot points based on updated joint angles
