@@ -741,15 +741,19 @@ class FiveDOFRobot:
 
         #print(jacobian)
 
-        print("Jacobian", jacobian)
+        #print("Jacobian", jacobian)
         print()
         invJac =  np.array(sp.transpose(jacobian) * (( (jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001) **-1 ))
-        print( jacobian * sp.transpose(jacobian)* sp.eye(3)*1.0001) 
-        print("hi", invJac)
+
+        print("Psuedo Jac", np.array((jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001))
+        det = np.linalg.det(np.array((jacobian * sp.transpose(jacobian)))) 
+        print("det", det)
+
+        #print( jacobian * sp.transpose(jacobian)* sp.eye(3)*1.0001) 
         vel = np.array([vel])
         print("shape of vel", np.shape(vel))
         print("shape of invJac",  np.shape(invJac))
-        print(invJac)
+        #print("InvJac", invJac)
         #print(vel * invJac)
         #print(vel*invJac)
         thetaDot = np.matmul(invJac, np.transpose(vel))
@@ -758,8 +762,15 @@ class FiveDOFRobot:
         for i in range(len(self.theta)):
             #print(self.theta[i])
             self.theta[i] = self.theta[i] + (float(thetaDot[i][0]) * timeStep)
-            print(type(self.theta[i]))
+            #print(type(self.theta[i]))
 
+       
+        # get the determinant as it approaches zero. 
+        # hard coded threshold, if it hits a certain amount (for how close it gets to determinant), scale down the speed
+
+        # theta bounds minimum and maximum velocities (joint velocity for skipping)
+        
+        # scale down end effector velocity as you get to a singularity
 
 
        #.02 Time Step
