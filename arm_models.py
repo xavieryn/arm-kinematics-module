@@ -582,14 +582,14 @@ class FiveDOFRobot:
                             [0, 0, 1, 0], 
                             [0, 0, 0, 1]])
 
-            m23 = np.array([[cos(self.theta[2]),-sin(self.theta[2]),0,self.l3 * cos(self.theta[2])],
-                [sin(self.theta[2]),cos(self.theta[2]),0,self.l3 * sin(self.theta[2])],
-                [0,0,1,0],
+            m23 = np.array([[cos(self.theta[2]),sin(self.theta[2]),0,self.l3 * cos(self.theta[2])],
+                [sin(self.theta[2]),-cos(self.theta[2]),0,self.l3 * sin(self.theta[2])],
+                [0,0,-1,0],
                 [0,0,0,1]])
             
-            m34 = np.array([[cos(self.theta[3]),-sin(self.theta[3]),0,self.l4* cos(self.theta[3])],
-                [sin(self.theta[3]),cos(self.theta[3]),0,self.l4 * sin(self.theta[3])],
-                [0,0,1,0],
+            m34 = np.array([[cos(self.theta[3]),sin(self.theta[3]),0,self.l4* cos(self.theta[3])],
+                [sin(self.theta[3]),-cos(self.theta[3]),0,self.l4 * sin(self.theta[3])],
+                [0,0,-1,0],
                 [0,0,0,1]])
             
             m45 = np.array([[0 , 0 , 1 , 0],
@@ -695,14 +695,14 @@ class FiveDOFRobot:
                             [0, 0, 1, 0], 
                             [0, 0, 0, 1]])
 
-        m23j = sp.Matrix([[sp.cos(t2),-sp.sin(t2),0,self.l3 * sp.cos(t2)],
-                [sp.sin(t2),sp.cos(t2),0,self.l3 * sp.sin(t2)],
-                [0,0,1,0],
+        m23j = sp.Matrix([[sp.cos(t2),sp.sin(t2),0,self.l3 * sp.cos(t2)],
+                [sp.sin(t2),-sp.cos(t2),0,self.l3 * sp.sin(t2)],
+                [0,0,-1,0],
                 [0,0,0,1]])
             
-        m34j = sp.Matrix([[sp.cos(t3),-sp.sin(t3),0,self.l4* sp.cos(t3)],
-                [sp.sin(t3),sp.cos(t3),0,self.l4 * sp.sin(t3)],
-                [0,0,1,0],
+        m34j = sp.Matrix([[sp.cos(t3),sp.sin(t3),0,self.l4* sp.cos(t3)],
+                [sp.sin(t3),-sp.cos(t3),0,self.l4 * sp.sin(t3)],
+                [0,0,-1,0],
                 [0,0,0,1]])
             
         m45j = sp.Matrix([[0 , 0 , 1 , 0],
