@@ -743,21 +743,28 @@ class FiveDOFRobot:
 
         #print("Jacobian", jacobian)
         print()
-        invJac =  np.array(sp.transpose(jacobian) * (( (jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001) **-1 ))
+        invJac =  np.array(sp.transpose(jacobian) * (( (jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001) **-1 ), dtype = float)
 
         #print("Psuedo Jac", np.array((jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001))
-        #det = np.linalg.det(np.array((jacobian * sp.transpose(jacobian)))) 
-        #print("det", det)
+
+        # Converts jac and trans jac to np array
+        jacobian_np = np.array(jacobian, dtype=float)
+        jac_transpose_np = np.array(sp.transpose(jacobian), dtype=float)
+
+        jjt = jacobian_np @ jac_transpose_np
+        det = np.linalg.det(jjt)
+
+        print("Psuedo Jac", np.array(jjt))
+        print("det", det)
 
         #print( jacobian * sp.transpose(jacobian)* sp.eye(3)*1.0001) 
         vel = np.array([vel])
-        print("shape of vel", np.shape(vel))
-        print("shape of invJac",  np.shape(invJac))
+        #print("shape of vel", np.shape(vel))
+        #   print("shape of invJac",  np.shape(invJac))
         #print("InvJac", invJac)
-        #print(vel * invJac)
-        #print(vel*invJac)
+       
         thetaDot = np.matmul(invJac, np.transpose(vel))
-        print("thetadot shape", np.shape(thetaDot))
+        #print("thetadot shape", np.shape(thetaDot))
         timeStep = 0.02
         for i in range(len(self.theta)):
             #print(self.theta[i])
