@@ -745,9 +745,9 @@ class FiveDOFRobot:
         print()
         invJac =  np.array(sp.transpose(jacobian) * (( (jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001) **-1 ))
 
-        print("Psuedo Jac", np.array((jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001))
-        det = np.linalg.det(np.array((jacobian * sp.transpose(jacobian)))) 
-        print("det", det)
+        #print("Psuedo Jac", np.array((jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001))
+        #det = np.linalg.det(np.array((jacobian * sp.transpose(jacobian)))) 
+        #print("det", det)
 
         #print( jacobian * sp.transpose(jacobian)* sp.eye(3)*1.0001) 
         vel = np.array([vel])
