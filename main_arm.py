@@ -6,7 +6,7 @@ import tkinter as tk
 from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from arm_models import Robot
-from helper_fcns.utils import EndEffector
+from utils import EndEffector
 import time
 from pynput import keyboard
 

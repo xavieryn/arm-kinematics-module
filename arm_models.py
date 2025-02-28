@@ -1,11 +1,12 @@
 from math import sin, cos
+import math
 import numpy as np
 #from numpy import cos, sin
 from matplotlib.figure import Figure
-from helper_fcns.utils import EndEffector, rotm_to_euler
+from utils import EndEffector, rotm_to_euler
 import sympy as sp
 from sympy import evalf
-
+import utils as ut
 
 PI = 3.1415926535897932384
 np.set_printoptions(precision=3)
@@ -685,66 +686,52 @@ class FiveDOFRobot:
         # Define the symbols
         t0, t1, t2, t3, t4  = sp.symbols('t0 t1 t2 t3 t4 ')
 
-        m01j = sp.Matrix([[sp.cos(t0), 0, sp.sin(t0), 0],
-                            [sp.sin(t0), 0, -sp.cos(t0), 0], 
-                            [0, 1, 0, self.l1], 
-                            [0, 0, 0, 1]])
+        arr = []
+        dhTable = [[t0, self.l1, 0, math.pi/2],
+                   [math.pi/2, 0, 0, 0],
+                   [t1, 0, self.l2, math.pi],
+                   [t2, 0, self.l3, math.pi], 
+                   [t3, 0, self.l4, 0],
+                   [-math.pi/2, 0, 0, -math.pi/2],
+                   [t4, self.l5, 0, 0]]
 
-        m12j = sp.Matrix([[sp.cos(t1), -sp.sin(t1), 0, self.l2 * sp.cos(t1)],
-                            [sp.sin(t1), sp.cos(t1), 0, self.l2 * sp.sin(t1)], 
-                            [0, 0, 1, 0], 
-                            [0, 0, 0, 1]])
+        for i in range(len(dhTable)):
+            arr.append(ut.dh_sympi_to_matrix(dhTable[i]))
+        
+        #print(arr[0])
+        #print(type(arr[0]))
+        Hm = (arr[0] * (arr[1] * (arr[2] * (arr[3] * (arr[4] * (arr[5] * arr[6]))))))
 
-        m23j = sp.Matrix([[sp.cos(t2),sp.sin(t2),0,self.l3 * sp.cos(t2)],
-                [sp.sin(t2),-sp.cos(t2),0,self.l3 * sp.sin(t2)],
-                [0,0,-1,0],
-                [0,0,0,1]])
-            
-        m34j = sp.Matrix([[sp.cos(t3),sp.sin(t3),0,self.l4* sp.cos(t3)],
-                [sp.sin(t3),-sp.cos(t3),0,self.l4 * sp.sin(t3)],
-                [0,0,-1,0],
-                [0,0,0,1]])
-            
-        m45j = sp.Matrix([[0 , 0 , 1 , 0],
-                            [-1 , 0 , 0 , 0],
-                            [0 , 1 , 0 , 0],
-                            [0 , 0 , 0, 1]])
-            
-        m56j = sp.Matrix([[sp.cos(t4), -sp.sin(t4), 0, 0],
-                            [sp.sin(t4), sp.cos(t4), 0, 0],
-                            [0 , 0 , 1 , self.l4 + self.l5],
-                            [0 , 0 , 0 , 1]])
-
-        Hm = m01j * m12j * m23j * m34j * m45j * m56j
+        #Hm = m01j * m12j * m23j * m34j * m45j * m56j
         #print(Hm)
         Hx = Hm[0, 3]
         Hy = Hm[1 , 3]
         Hz = Hm[2 , 3]
 
         # [row, column]
-        
-        #jacobian = np.zeros([3,5])
-
-        #print( Hx.diff(t0))
-        #print(Hx.diff(t1))
+    
         jacobian = sp.Matrix([[sp.diff(Hx, t0), sp.diff(Hx, t1), sp.diff(Hx, t2),sp.diff(Hx, t3), sp.diff(Hx, t4)],
                            [sp.diff(Hy, t0), sp.diff(Hy, t1), sp.diff(Hy, t2),sp.diff(Hy, t3), sp.diff(Hy, t4)],
                            [sp.diff(Hz, t0), sp.diff(Hz, t1), sp.diff(Hz, t2),sp.diff(Hz, t3), sp.diff(Hz, t4)],
                            ])
 
-        jacobian = jacobian.evalf(subs={t0: self.theta[0]})
-        jacobian =  jacobian.evalf(subs={t1: self.theta[1]})
-        jacobian =  jacobian.evalf(subs={t2: self.theta[2]})
-        jacobian =  jacobian.evalf(subs={t3: self.theta[3]})
-        jacobian =  jacobian.evalf(subs={t4: self.theta[4]})
 
-
-        #print(jacobian)
+        # This will not work because of variable names
+        # print(self.joint_values)
+        jacobian = jacobian.evalf(subs={t0: sp.rad(self.theta[0])})
+        jacobian =  jacobian.evalf(subs={t1: sp.rad(self.theta[1])})
+        jacobian =  jacobian.evalf(subs={t2: sp.rad(self.theta[2])})
+        jacobian =  jacobian.evalf(subs={t3: sp.rad(self.theta[3])})
+        jacobian =  jacobian.evalf(subs={t4: sp.rad(self.theta[4])})
 
         #print("Jacobian", jacobian)
-        print()
-        invJac =  np.array(sp.transpose(jacobian) * (( (jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001) **-1 ), dtype = float)
+        #print()
 
+        invJac =  np.array(sp.transpose(jacobian) * (( (jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001) **-1 ))
+       # print( jacobian * sp.transpose(jacobian)* sp.eye(3)*1.0001) 
+        #print("hi", invJac)
+        # [row, column]
+        #print("Jacobian", jacobian)
         #print("Psuedo Jac", np.array((jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001))
 
         # Converts jac and trans jac to np array
@@ -756,6 +743,7 @@ class FiveDOFRobot:
 
         print("Psuedo Jac", np.array(jjt))
         print("det", det)
+
 
         #print( jacobian * sp.transpose(jacobian)* sp.eye(3)*1.0001) 
         vel = np.array([vel])
