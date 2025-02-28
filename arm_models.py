@@ -573,48 +573,47 @@ class FiveDOFRobot:
         #self.HMatrix = np.matmul(self.T[0]), np.matmul(self.T[1], np.matmul(self.T[2],np.matmul(self.T[3],self.T[4])))
 
     def calc_HTM(self):
-            m01 = np.array([[cos(self.theta[0]), 0, sin(self.theta[0]), 0],
-                            [sin(self.theta[0]), 0, -cos(self.theta[0]), 0], 
-                            [0, 1, 0, self.l1], 
-                            [0, 0, 0, 1]])
+        h0_0_5 = [[cos(self.theta[0]), 0, sin(self.theta[0]), 0],
+               [sin(self.theta[0]), 0, -cos(self.theta[0]), 0],
+               [0, 1, 0, self.l1],
+               [0, 0, 0, 1]]
 
-            m12 = np.array([[cos(self.theta[1]), -sin(self.theta[1]), 0, self.l2 * cos(self.theta[1])],
-                            [sin(self.theta[1]), cos(self.theta[1]), 0, self.l2 * sin(self.theta[1])], 
-                            [0, 0, 1, 0], 
-                            [0, 0, 0, 1]])
+        h0_5_1 = [[0, -1, 0, 0],
+               [1, 0, 0, 0],
+               [0, 0, 1, 0],
+               [0, 0, 0, 1]]
 
-            m23 = np.array([[cos(self.theta[2]),sin(self.theta[2]),0,self.l3 * cos(self.theta[2])],
-                [sin(self.theta[2]),-cos(self.theta[2]),0,self.l3 * sin(self.theta[2])],
-                [0,0,-1,0],
-                [0,0,0,1]])
-            
-            m34 = np.array([[cos(self.theta[3]),sin(self.theta[3]),0,self.l4* cos(self.theta[3])],
-                [sin(self.theta[3]),-cos(self.theta[3]),0,self.l4 * sin(self.theta[3])],
-                [0,0,-1,0],
-                [0,0,0,1]])
-            
-            m45 = np.array([[0 , 0 , 1 , 0],
-                            [-1 , 0 , 0 , 0],
-                            [0 , 1 , 0 , 0],
-                            [0 , 0 , 0, 1]])
-            
-            m56 = np.array([[cos(self.theta[4]), -sin(self.theta[4]), 0, 0],
-                            [sin(self.theta[4]), cos(self.theta[4]), 0, 0],
-                            [0 , 0 , 1 , self.l4 + self.l5],
-                            [0 , 0 , 0 , 1]])
-        
-        
+        h1_2 =[[cos(self.theta[1]), sin(self.theta[1]), 0, self.l2*cos(self.theta[1])],
+                [sin(self.theta[1]), -cos(self.theta[1]), 0, self.l2*sin(self.theta[1])],
+                [0, 0, -1, 0],
+                [0, 0, 0, 1]]
 
-            # self.T = np.zeros((self.num_dof, 4, 4))
-            #print(self.T)
-            self.T[0] = m01
-            self.T[1] = m12
-            self.T[2] = m23
-            self.T[3] = m34 
-            self.T[4] = np.matmul(m45 ,m56) # m45 is just the rotation so it does not need another link
-            #print(self.T)
+        h2_3 = [[cos(self.theta[2]), sin(self.theta[2]), 0, self.l3*cos(self.theta[2])],
+                [sin(self.theta[2]), -cos(self.theta[2]), 0, self.l3*sin(self.theta[2])],
+                [0, 0, -1, 0],
+                [0, 0, 0, 1]]
+
+        h3_3_5 = [[cos(self.theta[3]),-sin(self.theta[3]),0,self.l4*cos(self.theta[3])],
+            [sin(self.theta[3]),cos(self.theta[3]),0,self.l4*cos(self.theta[3]),],
+            [0,0,1,0],
+            [0,0,0,1]]
+
+        h3_5_4 = [[0,0,1,0],
+            [-1,0,0,0],
+            [0,-1,0,0],
+            [0,0,0,1]]
+
+        h4_5 = [[cos(self.theta[4]),-sin(self.theta[4]),0,0],
+            [sin(self.theta[4]),cos(self.theta[4]),0,0],
+            [0,0,1,self.l5],
+            [0,0,0,1]]
 
 
+        self.T[0] = h0_0_5
+        self.T[1] = np.matmul(h0_5_1 , h1_2)
+        self.T[2] = h2_3
+        self.T[3] = h3_3_5
+        self.T[4] = np.matmul(h3_5_4, h4_5) # m45 is just the rotation so it does not need another link
             
 
     
