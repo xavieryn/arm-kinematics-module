@@ -696,11 +696,11 @@ class FiveDOFRobot:
 
         # This will not work because of variable names
         # print(self.joint_values)
-        jacobian = jacobian.evalf(subs={t0: sp.rad(self.theta[0])})
-        jacobian =  jacobian.evalf(subs={t1: sp.rad(self.theta[1])})
-        jacobian =  jacobian.evalf(subs={t2: sp.rad(self.theta[2])})
-        jacobian =  jacobian.evalf(subs={t3: sp.rad(self.theta[3])})
-        jacobian =  jacobian.evalf(subs={t4: sp.rad(self.theta[4])})
+        jacobian = jacobian.evalf(subs={t0: self.theta[0]})
+        jacobian =  jacobian.evalf(subs={t1: self.theta[1]})
+        jacobian =  jacobian.evalf(subs={t2: self.theta[2]})
+        jacobian =  jacobian.evalf(subs={t3: self.theta[3]})
+        jacobian =  jacobian.evalf(subs={t4: self.theta[4]})
 
         #print("Jacobian", jacobian)
         #print()
