@@ -626,92 +626,25 @@ class FiveDOFRobot:
 
     def calc_HTM(self):
 
-        h0_0_5 = np.array(
-            [
-                [cos(self.theta[0]), 0, sin(self.theta[0]), 0],
-                [sin(self.theta[0]), 0, -cos(self.theta[0]), 0],
-                [0, 1, 0, self.l1],
-                [0, 0, 0, 1],
-            ]
-        )
+        arr = []
+        dhTable = [
+            [self.theta[0], self.l1, 0, math.pi / 2],
+            [math.pi / 2, 0, 0, 0],
+            [self.theta[1], 0, self.l2, math.pi],
+            [self.theta[2], 0, self.l3, math.pi],
+            [self.theta[3], 0, self.l4, 0],
+            [-math.pi / 2, 0, 0, -math.pi / 2],
+            [self.theta[4], self.l5, 0, 0],
+        ]
 
-        h0_5_1 = np.array([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+        for i in range(len(dhTable)):
+            arr.append(ut.dh_to_matrix(dhTable[i]))
 
-        h1_2 = np.array(
-            [
-                [
-                    cos(self.theta[1]),
-                    sin(self.theta[1]),
-                    0,
-                    self.l2 * cos(self.theta[1]),
-                ],
-                [
-                    sin(self.theta[1]),
-                    -cos(self.theta[1]),
-                    0,
-                    self.l2 * sin(self.theta[1]),
-                ],
-                [0, 0, -1, 0],
-                [0, 0, 0, 1],
-            ]
-        )
-
-        h2_3 = np.array(
-            [
-                [
-                    cos(self.theta[2]),
-                    sin(self.theta[2]),
-                    0,
-                    self.l3 * cos(self.theta[2]),
-                ],
-                [
-                    sin(self.theta[2]),
-                    -cos(self.theta[2]),
-                    0,
-                    self.l3 * sin(self.theta[2]),
-                ],
-                [0, 0, -1, 0],
-                [0, 0, 0, 1],
-            ]
-        )
-
-        h3_3_5 = np.array(
-            [
-                [
-                    cos(self.theta[3]),
-                    -sin(self.theta[3]),
-                    0,
-                    self.l4 * cos(self.theta[3]),
-                ],
-                [
-                    sin(self.theta[3]),
-                    cos(self.theta[3]),
-                    0,
-                    self.l4 * cos(self.theta[3]),
-                ],
-                [0, 0, 1, 0],
-                [0, 0, 0, 1],
-            ]
-        )
-
-        h3_5_4 = np.array([[0, 0, 1, 0], [-1, 0, 0, 0], [0, -1, 0, 0], [0, 0, 0, 1]])
-
-        h4_5 = np.array(
-            [
-                [cos(self.theta[4]), -sin(self.theta[4]), 0, 0],
-                [sin(self.theta[4]), cos(self.theta[4]), 0, 0],
-                [0, 0, 1, self.l5],
-                [0, 0, 0, 1],
-            ]
-        )
-
-        self.T[0] = h0_0_5
-        self.T[1] = np.matmul(h0_5_1, h1_2)
-        self.T[2] = h2_3
-        self.T[3] = h3_3_5
-        self.T[4] = np.matmul(
-            h3_5_4, h4_5
-        )  # m45 is just the rotation so it does not need another link
+        self.T[0] = np.matmul(arr[0], arr[1])
+        self.T[1] = arr[2]
+        self.T[2] = arr[3]
+        self.T[3] = np.matmul(arr[4], arr[5])
+        self.T[4] = arr[6]  # m45 is just the rotation so it does not need another link
         print(self.T)
 
     def calc_forward_kinematics(self, theta: list, radians=False):
