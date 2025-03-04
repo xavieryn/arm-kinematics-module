@@ -280,10 +280,21 @@ class TwoDOFRobot():
         x, y = EE.x, EE.y
         l1, l2 = self.l1, self.l2
 
+
         ########################################
 
-        # insert your code here
-
+        # THIS CODE IS SLIGHTLY WRONG 
+        # I think I need to add the plus or minus thing
+        # Look at this more tomorrow
+        # receives end effector values
+        L = np.sqrt(x**2 + y**2) 
+        beta = np.arccos((l1**2+l2**2 - L**2)/(2*l1*l2))
+        self.theta[1] = PI - beta
+        print(self.theta[1])
+        alpha = np.arctan((l2* np.sin(self.theta[1]))/(l1 + l2*np.cos(self.theta[1])))
+        gamma = np.arctan(y/x)
+        self.theta[0] = gamma - alpha 
+        print(self.theta[0])
         ########################################
         
         # Calculate robot points based on the updated joint angles
