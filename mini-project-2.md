@@ -23,7 +23,7 @@ This assignment will count towards your **final course grade**. It is a team-bas
 - Compare the results and report your observations
 
 **Problem 4 (Cartesian Path Following Demo)**
-- Implement a simple cartesian path following algorithm and demonstrate with: (1) tracing out our given shapes ([**download here**]()), (2) tracing out a word (e.g., "A", "N", "T") - define waypoints to achieve your letters.
+- Implement a simple cartesian path following algorithm and demonstrate with: (1) tracing out our given shapes ([**download here**](https://github.com/OlinCollege-FunRobo/arm-kinematics-module/blob/main/resources/Mini-Project%202%20Target%20V1.pdf)), (2) tracing out a word (e.g., "A", "N", "T") - define waypoints to achieve your letters.
 
 <br />
 
