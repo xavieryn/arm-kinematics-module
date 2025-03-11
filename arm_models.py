@@ -359,18 +359,13 @@ class TwoDOFRobot():
 
         ########################################
         # insert your code here
-        print(self.theta)
         # self.solve_forward_kinematics(self.theta, radians=True)
 
-        print(p)
         e = np.subtract([x,y], self.solve_forward_kinematics(self.theta, radians=True))
-        print("e", e)
-        print("inverse jac shape", np.shape(self.inverse_jacobian()), "vs e.shape ", np.shape(e))
-        print("result of inverse jac @ e ", self.inverse_jacobian() @ e)
-        print("p is ",np.add(p , self.inverse_jacobian() @ e) )
-
+        print("starting e", e)
         for i in range(ilimit):
             e = np.subtract([x,y], self.solve_forward_kinematics(self.theta , radians=True))
+            print("e after", e )
             print(i, " iter" , e)
             if np.linalg.norm(e) > tol:
                 p = np.add(p , self.inverse_jacobian() @ e)
@@ -379,11 +374,13 @@ class TwoDOFRobot():
             else:
                 self.theta[0],self.theta[1] = p[0], p[1]
                 break
+        
         print("theta", self.theta)
 
-        # use current position and then add a small scaled randomness
-        # x = f(theta) forward kinematics equation
-        # g = x - 
+        print("e", e)
+        print("inverse jac shape", np.shape(self.inverse_jacobian()), "vs e.shape ", np.shape(e))
+        print("result of inverse jac @ e ", self.inverse_jacobian() @ e)
+        print("p is ",np.add(p , self.inverse_jacobian() @ e) )
 
         ########################################
 
