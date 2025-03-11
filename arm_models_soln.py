@@ -370,7 +370,7 @@ class TwoDOFRobot():
             np.ndarray: The inverse Jacobian matrix.
         """
         J = self.jacobian()
-        print(f'Determinant of J: {np.linalg.det(J)}')
+        #print(f'Determinant of J: {np.linalg.det(J)}')
         # return np.linalg.inv(self.jacobian())
         return np.linalg.pinv(self.jacobian())
      
