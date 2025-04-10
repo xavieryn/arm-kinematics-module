@@ -369,7 +369,7 @@ class Visualizer:
         return 'Deactivated!' if not self.vk_status else 'Activated!'
 
 
-    def on_press(self, key):
+    def on_press(self, key): # VELOCITY OF THE ROBOT
         """
         Handles key press events to control the velocity of the robot.
 
@@ -377,18 +377,18 @@ class Visualizer:
             key (pynput.keyboard.Key): The key that was pressed.
         """
         if self.vk_status:
-            if key == keyboard.Key.up:
+            if key == keyboard.Key.up: # Y up
                 self.v[1] = 1
-            elif key == keyboard.Key.down:
+            elif key == keyboard.Key.down: # Y down
                 self.v[1] = -1
-            elif key == keyboard.Key.left:
+            elif key == keyboard.Key.left: # x left
                 self.v[0] = -1
-            elif key == keyboard.Key.right:
+            elif key == keyboard.Key.right: # x right
                 self.v[0] = 1
             elif hasattr(key, 'char'):
-                if key.char == 'w':
+                if key.char == 'w': # z up
                     self.v[2] = 1
-                elif key.char == 's':
+                elif key.char == 's': # z down
                     self.v[2] = -1
 
 
@@ -449,6 +449,9 @@ def main():
     visualization for the corresponding robot type.
     """
     # Argument parsing
+
+    # THIS CHANGES WHAT ROBOT WE ARE USING
+    # IF I PUT IN THE ORIGINAL SCRIPT, THEN I SAY --robot_type 5-dof
     parser = argparse.ArgumentParser(description="Robot Manipulator Visualization for Kinematics Analysis")
     parser.add_argument('--robot_type', 
                         help="Insert robot type, e.g., '2-dof', 'scara', '5-dof'. Default is '2-dof'.", 
