@@ -284,29 +284,47 @@ class TrapezoidVelocity():
     
     def solve(self):
         t0, tf = 0, self.T
-        self.peak_vel = (self.final_pos - self.start_pos) / tf 
-        self.tb = (self.start_pos - self.final_pos + self.peak_vel* tf) / self.peak_vel
+        print(self.final_pos)
+        self.peak_vel = 1.01*(self.final_pos[0] - self.start_pos[0]) / tf # This scalar here changes the shape of the trapezoid. If you set it it to 2,
+        # then it will be a triange velocity, and if you set it to 1.01, then it will be a constant velocity (basically the whole time)
+        print("peak_vel", self.peak_vel)
+        self.tb = (self.start_pos[0] - self.final_pos[0] + self.peak_vel* tf) / self.peak_vel # This part is funky
+        print("start - final", self.start_pos[0] - self.final_pos[0])
+        print("peak * tf", self.peak_vel * tf)
+        print("tb", self.tb)
         self.peak_acc = self.peak_vel / self.tb
         
-        if self.t < self.tb:
-            self.qt = self.start_pos + (self.peak_acc*self.t**2) / 2 # from beginning until time blend (constant velocity)
-        elif self.t < tf - self.t:
-            self.qt = (self.final_pos + self.start_pos - self.peak_vel*tf) / 2 + self.peak_vel *self.t
-        else: 
-            self.qt = self.final_pos - (self.peak_acc * tf**2) /2 + self.peak_acc * tf * self.t - (self.peak_acc * self.t**2) / 2 
+        # if self.t < self.tb:
+        #     self.qt = self.start_pos[0] + (self.peak_acc*self.t**2) / 2 # from beginning until time blend (constant velocity)
+        # elif self.t < tf - self.t:
+        #     self.qt = (self.final_pos[0] + self.start_pos[0] - self.peak_vel*tf) / 2 + self.peak_vel *self.t
+        # else: 
+        #     self.qt = self.final_pos[0] - (self.peak_acc * tf**2) /2 + self.peak_acc * tf * self.t - (self.peak_acc * self.t**2) / 2 
         
         
         
 
     def generate(self, nsteps=100):
+        tf = self.T
         self.t = np.linspace(0, self.T, nsteps)
-
+        print("tb", self.tb)
+        print("tf - tb", tf - self.tb)
+        print("tf", tf)
         for i in range(self.ndof): # iterate through all DOFs
             q, qd, qdd = [], [], []
-            c = self.coeff[:,i]
             for t in self.t: # iterate through time, t
-                q.append(c[0] + c[1] * t + c[2] * t**2 + c[3] * t**3 + c[4] * t**4 + c[5] * t**5)
-                qd.append(c[1] + 2 * c[2] * t + 3 * c[3] * t**2 + 4 * c[4] *  t**3 + 5 * c[5] * t**4)
-                qdd.append(2*c[2] +  6 * c[3] * t + 12 * c[4] * t**2 + 20 * c[5] * t**3)    
+                if t < self.tb:
+                    q.append(self.start_pos[0] + (self.peak_acc* t **2) / 2)
+                    qd.append(self.peak_acc * t)
+                    qdd.append( self.peak_acc)  
+                elif t <= tf - self.tb:
+                    print("hi")
+                    q.append((self.final_pos[0] + self.start_pos[0] - self.peak_vel*tf) / 2 + self.peak_vel * t )
+                    qd.append(self.peak_vel)
+                    qdd.append( 0)  
+                elif t <= tf: 
+                    q.append(self.final_pos[0] - (self.peak_acc * tf**2) /2 + self.peak_acc * tf * t - (self.peak_acc * t**2) / 2 )
+                    qd.append(self.peak_acc*tf - self.peak_acc * t)
+                    qdd.append( -self.peak_acc)    
             self.X[i] = [q, qd, qdd]
         return self.X

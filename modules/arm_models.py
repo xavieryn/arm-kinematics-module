@@ -1,23 +1,11 @@
-<<<<<<< HEAD:modules/arm_models.py
 from math import sqrt, sin, cos, atan, atan2, degrees, pi
-=======
-from math import sin, cos
-import math
->>>>>>> 3cae1dc91ea44607537bbf7e0e38b63310ffaf72:arm_models.py
 import numpy as np
 #from numpy import cos, sin
 from matplotlib.figure import Figure
-<<<<<<< HEAD:modules/arm_models.py
-from helper_fcns.utils import EndEffector, rotm_to_euler, euler_to_rotm, check_joint_limits, dh_to_matrix, near_zero, wraptopi
-
+from utils import EndEffector, rotm_to_euler, euler_to_rotm, check_joint_limits, dh_to_matrix, near_zero, wraptopi
+import math
 PI = 3.1415926535897932384
 # np.set_printoptions(precision=3)
-=======
-from utils import EndEffector, rotm_to_euler
-import sympy as sp
-from sympy import evalf
-import utils as ut
->>>>>>> 3cae1dc91ea44607537bbf7e0e38b63310ffaf72:arm_models.py
 
 PI = 3.1415926535897932384
 
@@ -770,47 +758,12 @@ class FiveDOFRobot:
         self.ee = EndEffector()
         
         # Robot's points
-        self.num_dof = 5 
+        self.num_dof = 5
         self.points = [None] * (self.num_dof + 1)
         
         # Denavit-Hartenberg parameters and transformation matrices
         self.DH = np.zeros((5, 4))
-
-        
-        self.HMatrix = np.zeros([4,4])
         self.T = np.zeros((self.num_dof, 4, 4))
-
-        # THIS IS WHERE WE PUT DH TABLE
-        self.calc_HTM()
-
-        #self.makeHMatrix()
-
-    
-    #def makeHMatrix(self):
-
-        #self.HMatrix = np.matmul(self.T[0]), np.matmul(self.T[1], np.matmul(self.T[2],np.matmul(self.T[3],self.T[4])))
-
-    def calc_HTM(self):
-       
-        arr = []
-        dhTable = [[self.theta[0], self.l1, 0, math.pi/2],
-                   [math.pi/2, 0, 0, 0],
-                   [self.theta[1], 0, self.l2, math.pi],
-                   [self.theta[2], 0, self.l3, math.pi], 
-                   [self.theta[3], 0, self.l4, 0],
-                   [-math.pi/2, 0, 0, -math.pi/2],
-                   [self.theta[4], self.l5, 0, 0]]
-
-        for i in range(len(dhTable)):
-            arr.append(ut.dh_to_matrix(dhTable[i]))
-        
-        self.T[0] = np.matmul(arr[0], arr[1])
-        self.T[1] = arr[2]
-        self.T[2] = arr[3]
-        self.T[3] = np.matmul(arr[4], arr[5])
-        self.T[4] = arr[6] # m45 is just the rotation so it does not need another link
-        print (self.T)
-
 
     
     def calc_forward_kinematics(self, theta: list, radians=False):
@@ -838,21 +791,9 @@ class FiveDOFRobot:
         self.DH[3] = [self.theta[3] - np.pi/2, 0, 0, -np.pi/2]
         self.DH[4] = [self.theta[4], self.l4 + self.l5, 0, 0]
 
-<<<<<<< HEAD:modules/arm_models.py
         # Compute the transformation matrices
         for i in range(self.num_dof):
             self.T[i] = dh_to_matrix(self.DH[i])
-=======
-        if not radians:
-            for i in range(len(self.theta)):
-                self.theta[i] = theta[i] * PI / 180
-        else:
-            self.theta = theta
-        #print(self.theta)
-
-      
-        ########################################
->>>>>>> 3cae1dc91ea44607537bbf7e0e38b63310ffaf72:arm_models.py
         
         # Calculate robot points (positions of joints)
         self.calc_robot_points()
@@ -885,7 +826,6 @@ class FiveDOFRobot:
             theta1 = [atan2(y_wrist, x_wrist), wraptopi(atan2(y_wrist, x_wrist) + PI)]
             # TIP #1: the wraptopi ensures that the values stays within -pi to pi
 
-<<<<<<< HEAD:modules/arm_models.py
             # using cosine rule, find theta_3
             s = z_wrist - l1
             r = [-sqrt(x_wrist**2 + y_wrist**2), sqrt(x_wrist**2 + y_wrist**2)]
@@ -896,10 +836,6 @@ class FiveDOFRobot:
             # TIP #3: Alternative approach to finding theta3
             # beta = np.arccos((-L**2 + l2**2 + l3**2) / (2 * l2 * l3))
             # theta3 = [pi - beta, beta - pi]   
-=======
-        
-        ########################################
->>>>>>> 3cae1dc91ea44607537bbf7e0e38b63310ffaf72:arm_models.py
 
 
             possible_solns, valid_solns= [], []
@@ -1025,7 +961,6 @@ class FiveDOFRobot:
         # thetadot = self.inverse_jacobian(pseudo=True) @ vel
         thetadot = self.damped_inverse_jacobian() @ vel
 
-<<<<<<< HEAD:modules/arm_models.py
         # print(f'normal case: {self.inverse_jacobian(pseudo=True)}')
         # print(f'damped inverse case: {self.damped_inverse_jacobian()}')
 
@@ -1042,100 +977,6 @@ class FiveDOFRobot:
         # print(f'linear vel: {[round(vel[0], 3), round(vel[1], 3), round(vel[2], 3)]}')
         # print(f'thetadot (deg/s) = {[round(td,2) for td in thetadot]}')
         # print(f'Commanded theta (deg) = {[round(th,2) for th in self.theta]}')  
-=======
-        # Jacobian stuff
-
-        # Define the symbols
-        t0, t1, t2, t3, t4  = sp.symbols('t0 t1 t2 t3 t4 ')
-
-        arr = []
-        
-        dhTable = [[t0, self.l1, 0, math.pi/2],
-                   [math.pi/2, 0, 0, 0],
-                   [t1, 0, self.l2, math.pi],
-                   [t2, 0, self.l3, math.pi], 
-                   [t3, 0, self.l4, 0],
-                   [-math.pi/2, 0, 0, -math.pi/2],
-                   [t4, self.l5, 0, 0]]
-
-        for i in range(len(dhTable)):
-            arr.append(ut.dh_sympi_to_matrix(dhTable[i]))
-        
-        #print(arr[0])
-        #print(type(arr[0]))
-        Hm = (arr[0] * (arr[1] * (arr[2] * (arr[3] * (arr[4] * (arr[5] * arr[6]))))))
-
-        #Hm = m01j * m12j * m23j * m34j * m45j * m56j
-        #print(Hm)
-        Hx = Hm[0, 3]
-        Hy = Hm[1 , 3]
-        Hz = Hm[2 , 3]
-
-        # [row, column]
-    
-        jacobian = sp.Matrix([[sp.diff(Hx, t0), sp.diff(Hx, t1), sp.diff(Hx, t2),sp.diff(Hx, t3), sp.diff(Hx, t4)],
-                           [sp.diff(Hy, t0), sp.diff(Hy, t1), sp.diff(Hy, t2),sp.diff(Hy, t3), sp.diff(Hy, t4)],
-                           [sp.diff(Hz, t0), sp.diff(Hz, t1), sp.diff(Hz, t2),sp.diff(Hz, t3), sp.diff(Hz, t4)],
-                           ])
-
-
-        # This will not work because of variable names
-        # print(self.joint_values)
-        jacobian = jacobian.evalf(subs={t0: self.theta[0]})
-        jacobian =  jacobian.evalf(subs={t1: self.theta[1]})
-        jacobian =  jacobian.evalf(subs={t2: self.theta[2]})
-        jacobian =  jacobian.evalf(subs={t3: self.theta[3]})
-        jacobian =  jacobian.evalf(subs={t4: self.theta[4]})
-
-        #print("Jacobian", jacobian)
-        #print()
-
-        invJac =  np.array(sp.transpose(jacobian) * (( (jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001) **-1 ))
-       # print( jacobian * sp.transpose(jacobian)* sp.eye(3)*1.0001) 
-        #print("hi", invJac)
-        # [row, column]
-        #print("Jacobian", jacobian)
-        #print("Psuedo Jac", np.array((jacobian * sp.transpose(jacobian)) + sp.eye(3)*.0001))
-
-        # Converts jac and trans jac to np array
-        jacobian_np = np.array(jacobian, dtype=float)
-        jac_transpose_np = np.array(sp.transpose(jacobian), dtype=float)
-
-        jjt = jacobian_np @ jac_transpose_np
-        det = np.linalg.det(jjt)
-
-        print("Psuedo Jac", np.array(jjt))
-        print("det", det)
-
-
-        #print( jacobian * sp.transpose(jacobian)* sp.eye(3)*1.0001) 
-        vel = np.array([vel])
-        #print("shape of vel", np.shape(vel))
-        #   print("shape of invJac",  np.shape(invJac))
-        #print("InvJac", invJac)
-       
-        thetaDot = np.matmul(invJac, np.transpose(vel))
-        #print("thetadot shape", np.shape(thetaDot))
-        timeStep = 0.02
-        for i in range(len(self.theta)):
-            #print(self.theta[i])
-            self.theta[i] = self.theta[i] + (float(thetaDot[i][0]) * timeStep)
-            #print(type(self.theta[i]))
-
-       
-        # get the determinant as it approaches zero. 
-        # hard coded threshold, if it hits a certain amount (for how close it gets to determinant), scale down the speed
-
-        # theta bounds minimum and maximum velocities (joint velocity for skipping)
-        
-        # scale down end effector velocity as you get to a singularity
-
-        #print(Hy.diff(t0))n
-        # Z1xR1
-
-        # endJointVelocity = invJac * vel
-        ########################################
->>>>>>> 3cae1dc91ea44607537bbf7e0e38b63310ffaf72:arm_models.py
 
         # Recompute robot points based on updated joint angles
         self.calc_forward_kinematics(self.theta, radians=True)
@@ -1320,7 +1161,7 @@ class FiveDOFRobot:
 
     def calc_robot_points(self):
         """ Calculates the main arm points using the current joint angles """
-        self.calc_HTM()
+
         # Initialize points[0] to the base (origin)
         self.points[0] = np.array([0, 0, 0, 1])
 
@@ -1328,12 +1169,10 @@ class FiveDOFRobot:
         T_cumulative = [np.eye(4)]
         for i in range(self.num_dof):
             T_cumulative.append(T_cumulative[-1] @ self.T[i])
-            #print("T_cumulative", T_cumulative[-1] @ self.T[i])
 
         # Calculate the robot points by applying the cumulative transformations
         for i in range(1, 6):
             self.points[i] = T_cumulative[i] @ self.points[0]
-            #print(self.points[i])
 
         # Calculate EE position and rotation
         self.EE_axes = T_cumulative[-1] @ np.array([0.075, 0.075, 0.075, 1])  # End-effector axes
@@ -1368,4 +1207,3 @@ class FiveDOFRobot:
         # print(f'distance {np.linalg.norm(e)}')
         # print(f'calc {ee_position_calc} | act {ee_position_actual}\n')
         return True if np.linalg.norm(e) < tol else False
-
