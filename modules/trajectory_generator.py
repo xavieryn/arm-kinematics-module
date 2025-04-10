@@ -9,7 +9,7 @@ class MultiAxisTrajectoryGenerator():
     Supports linear, cubic, quintic polynomial, and trapezoidal velocity profiles.
     """
     
-    def __init__(self, method="quintic",
+    def __init__(self, method="trapezoidal",
                  mode="joint",
                  interval=[0,1],
                  ndof=1,
@@ -265,4 +265,48 @@ class TrapezoidVelocity():
     """
     
     def __init__(self, trajgen):
-        pass
+        self._copy_params(trajgen)
+        self.solve()
+    
+    
+    def _copy_params(self, trajgen):
+        self.start_pos = trajgen.start_pos
+        self.start_vel = trajgen.start_vel
+        self.start_accel = trajgen.start_acc
+        self.final_pos = trajgen.final_pos
+        self.final_vel = trajgen.final_vel
+        self.final_accel = trajgen.final_acc
+
+        self.T = trajgen.T       
+        self.ndof = trajgen.ndof
+        self.X = [None] * self.ndof
+
+    
+    def solve(self):
+        t0, tf = 0, self.T
+        self.peak_vel = (self.final_pos - self.start_pos) / tf 
+        self.tb = (self.start_pos - self.final_pos + self.peak_vel* tf) / self.peak_vel
+        self.peak_acc = self.peak_vel / self.tb
+        
+        if self.t < self.tb:
+            self.qt = self.start_pos + (self.peak_acc*self.t**2) / 2 # from beginning until time blend (constant velocity)
+        elif self.t < tf - self.t:
+            self.qt = (self.final_pos + self.start_pos - self.peak_vel*tf) / 2 + self.peak_vel *self.t
+        else: 
+            self.qt = self.final_pos - (self.peak_acc * tf**2) /2 + self.peak_acc * tf * self.t - (self.peak_acc * self.t**2) / 2 
+        
+        
+        
+
+    def generate(self, nsteps=100):
+        self.t = np.linspace(0, self.T, nsteps)
+
+        for i in range(self.ndof): # iterate through all DOFs
+            q, qd, qdd = [], [], []
+            c = self.coeff[:,i]
+            for t in self.t: # iterate through time, t
+                q.append(c[0] + c[1] * t + c[2] * t**2 + c[3] * t**3 + c[4] * t**4 + c[5] * t**5)
+                qd.append(c[1] + 2 * c[2] * t + 3 * c[3] * t**2 + 4 * c[4] *  t**3 + 5 * c[5] * t**4)
+                qdd.append(2*c[2] +  6 * c[3] * t + 12 * c[4] * t**2 + 20 * c[5] * t**3)    
+            self.X[i] = [q, qd, qdd]
+        return self.X
