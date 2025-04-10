@@ -25,7 +25,7 @@ class Visualizer:
         Args:
             root (tk.Tk): The Tkinter root window.
             args (argparse.Namespace): The command-line arguments.
-        """
+        """ 
         self.root = root
         self.root.title(f"Robot Manipulator Visualization for a {args.robot_type} robot")
 
